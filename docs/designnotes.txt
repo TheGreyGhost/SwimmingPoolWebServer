@@ -1,0 +1,84 @@
+Basic ideas:
+First up- get TCP/IP communication between Arduino and Raspberry Pi working.  Why TCP/IP and not serial?  no reason, just easier from hardware setup.
+
+1) setup comms
+2) Raspberry Pi sends commands as per serial interface, receives replies.
+3) It does this by listening on a port, doesn't need to be HTML.
+
+Listener:
+https://howto.lintel.in/listen-arbitrary-port-print-data-coming-using-netcat/
+How to listen on an arbitrary port and print the data which is coming using netcat
+nc -l localhost 10000 > log.txt
+sudo tcpdump -i eth0 -vvvvtttAXns 1500 'port 10000'
+
+tcpdump -w 08232010.pcap -i eth0
+tcpdump src port 80
+tcpdump dst port 80
+tcpdump -i eth1
+
+use either tcpdump or nc?
+https://www.commandlinux.com/man-page/man1/nc.1.html
+netcat is a simple unix utility which reads and writes data across network connections, using TCP or UDP protocol. 
+Netcat can also function as a server, by listening for inbound connections on arbitrary ports 
+Read more at: https://www.commandlinux.com/man-page/man1/nc.1.html
+
+https://learn.adafruit.com/raspipe-a-raspberry-pi-pipeline-viewer-part-2/networked-pipes-with-netcat
+#!/usr/bin/env bash 
+echo "Listening on port 5280" 
+netcat -l 5280 -k | ./raspipe_pitft.sh
+
+This script just invokes netcat, listening on port 5280, with -k, which says to listen for a new connection once the current one closes. (Normally, the program will exit as soon as one connection finishes.)
+
+It is quite simple to build a very basic client/server model using nc. On one console, start nc listening on a specific port for a connection. For example:
+
+$ nc -l 1234
+nc is now listening on port 1234 for a connection. On a second console (or a second machine), connect to the machine and port being listened on:
+
+$ nc 127.0.0.1 1234
+There should now be a connection between the ports. Anything typed at the second console will be concatenated to the first, and vice-versa. After the connection has been set up, nc does not really care which side is being used as a 'server' and which side is being used as a 'client'. The connection may be terminated using an EOF 
+
+set up interfaces - two different networks?
+linux with two NICs
+http://coderazzi.net/linux/dual_nic_linux.htm
+
+Set up two subnets
+ip addr add 192.168.2.1/24 dev eth0
+
+A static route can be defined as a pre-determined path that network information must follow to reach a specific host or network. 
+
+https://wiki.debian.org/NetworkConfiguration
+add to /etc/network/interfaces or /etc/network/interfaces.d/
+auto eth0
+iface eth0 inet static
+address 192.168.50.2
+netmask 255.255.255.0
+gateway 192.168.50.1
+9. How do I Add Persistence Static Routes
+All the above route will be lost after a system restart. 
+auto eth0
+iface eth0 inet static
+address 192.168.50.2
+netmask 255.255.255.0
+gateway 192.168.50.100
+#########{Static Route}###########
+up ip route add 10.10.20.0/24 via 192.168.50.100 dev eth0
+
+can do either:
+auto eth1
+iface eth1 inet static
+address 192.168.1.10
+netmask 255.255.255.0
+up route add -net 192.168.0.0 netmask 255.255.0.0 gw 192.168.1.1
+up route add -net 172.16.0.0 netmask 255.255.0.0 gw 192.168.1.1
+or:
+auto eth1 iface eth1 inet static
+address 192.168.1.10
+netmask 255.255.255.0
+up ip route add 172.16.0.0/24 via 192.168.1.1 || true
+
+https://www.techrepublic.com/article/understand-the-basics-of-linux-routing/
+-> I think i probably don't need to add a route at all.
+just define different subnets on the two NICs.
+
+
+
