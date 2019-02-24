@@ -27,7 +27,7 @@
       $datetime = new DateTime("@$unix_timestamp");
 	  // convert from UTC (GMT) to local time
       $date_time_format = $datetime->format('Y-m-d H:i:s');
-      $time_zone_from="Australia/Adelaide";
+      $time_zone_from="UTC";
       $time_zone_to='Australia/Adelaide';
       $display_date = new DateTime($date_time_format, new DateTimeZone($time_zone_from));
       $display_date->setTimezone(new DateTimeZone($time_zone_to));
@@ -48,10 +48,19 @@
     echo "cold inlet (from pool):".round($vrow["hx_cold_inlet_smooth"],1)." C<br>";
     echo "cold outlet (to pool):".round($vrow["hx_cold_outlet_smooth"],1)." C<br>";
     echo "--system status---<br>";	
-    echo "realtime clock status:".$srow["realtime_clock_status_label"]."<br>";
     echo "logfile status:".$srow["logfile_status_label"]."<br>";
     echo "ethernet status:".$srow["ethernet_status_label"]."<br>";
     echo "solar sensor status:".$srow["solar_intensity_reading_invalid_label"]."<br>";	
+    echo "realtime clock status:".$srow["realtime_clock_status_label"]."<br>";
+    $timezoneseconds = $srow["timezoneseconds"];
+    if ($timezoneseconds < 0) {
+      $timezoneseconds = -$timezoneseconds;
+      echo "timezone:-".gmdate("H:i:s",$timezoneseconds)."<br>";
+    } else {
+      echo "timezone:+".gmdate("H:i:s",$timezoneseconds)."<br>";
+    }
+    echo "synchronisation status:".$srow["timesyncstatus_label"]."<br>";
+    echo "synchronisation mismatch (seconds RTC is ahead):".$srow["timemismatchRTCsecondsahead"]."<br>";
     echo "last assertion failure code:".$srow["assert_failure_code"]."<br>";
     echo "---temperature probe statuses---<br>";
     echo "hot inlet:".$srow["hx_hot_inlet_status_label"]."<br>";
