@@ -1,0 +1,39 @@
+27 Feb 2019
+At about 21:00 I checked using web view 192.168.1.220
+Last update around 12:30 (I think)
+
+Then did putty; had to restart vncserver since there was a power failure beforehand (feb 27 4:17 - 4:54)
+Loaded arduino but didn't open terminal
+192.168.1.220 started working again
+
+checked logs using journalctl -b
+
+automationwebserver.service has been running since 24 Feb
+Found:
+Feb 27 12:30:41 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 12:30:43 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+
+/var/ramdrive log only started from 21:39 when I began putty
+just before:
+Feb 27 21:25:53 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 21:25:55 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+Feb 27 21:25:58 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 21:25:59 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+Feb 27 21:26:01 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 21:26:02 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+Feb 27 21:26:24 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 21:26:26 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+Feb 27 21:26:31 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link down
+Feb 27 21:26:32 SwimmingPool kernel: smsc95xx 1-1.1:1.0 eth0: link up, 100Mbps,
+
+Feb 27 21:31:06 SwimmingPool sshd[7863]: Accepted publickey for pi from 192.168.
+Feb 27 21:31:19 SwimmingPool sshd[7866]: error: connect_to localhost port 5901:
+Feb 27 21:31:29 SwimmingPool kernel: Under-voltage detected! (0x00050005)
+Feb 27 21:31:31 SwimmingPool org.gtk.vfs.AfcVolumeMonitor[7957]: Volume monitor
+Feb 27 21:31:37 SwimmingPool kernel: Voltage normalised (0x00000000)
+Feb 27 21:31:39 SwimmingPool Xvnc-root[7894]: user pi authenticated
+Feb 27 21:31:39 SwimmingPool Xvnc:1[7893]: session started: user pi permissions
+
+The last recorded pool temp is still correct so Arduino was running ok.
+
+Just the web server service?  Related to 
