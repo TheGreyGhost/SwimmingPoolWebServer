@@ -1,3 +1,13 @@
 where are my setup notes from Swimming Pool Web server?
 
 180423RvW-RaspberryPiSetup.docx
+
+graphs and visualisation:
+consider dygraphs http://dygraphs.com/index.html
+-needs a datasource
+Google Datatable?
+
+The chart is interactive: you can mouse over to highlight individual values. You can click and drag to zoom. Double-clicking will zoom you back out. Shift-drag will pan. You can change the number and hit enter to adjust the averaging period.
+
+Google webdesigner?
+https://www.google.com/webdesigner/
