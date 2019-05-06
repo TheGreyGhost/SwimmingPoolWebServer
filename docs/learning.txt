@@ -7,7 +7,62 @@ consider dygraphs http://dygraphs.com/index.html
 -needs a datasource
 Google Datatable?
 
+http://dygraphs.com/data.html
+
 The chart is interactive: you can mouse over to highlight individual values. You can click and drag to zoom. Double-clicking will zoom you back out. Shift-drag will pan. You can change the number and hit enter to adjust the averaging period.
 
 Google webdesigner?
 https://www.google.com/webdesigner/
+
+-------------
+Array (native format)
+If you'll be constructing your data set from a server-side program (or from JavaScript) then you're better off producing an array than CSV data. This saves the cost of parsing the CSV data and also avoids common parser errors.
+
+The downside is that it's harder to look at your data (you'll need to use a JS debugger) and that the data format is a bit less clear for values with uncertainties.
+
+Here's an example of "native format":
+
+
+  new Dygraph(document.getElementById("graphdiv2"),
+              [
+                [1,10,100],
+                [2,20,80],
+                [3,50,60],
+                [4,70,80]
+              ],
+              {
+                labels: [ "x", "A", "B" ]
+              });
+Headers
+Headers for native format must be specified via the labels option. There's no other way to set them.
+
+x-values
+If you want your x-values to be dates, you'll need to use specify a Date object in the first column. Otherwise, specify a number. Here's a sample array with dates on the x-axis:
+
+
+  [
+    [ new Date("2009/07/12"), 100, 200 ],
+    [ new Date("2009/07/19"), 150, 220 ]
+  ]
+y-values
+You can specify errorBars, fractions or customBars with the array format. If you specify any of these, the values become arrays (rather than numbers). Here's what the format looks like for each one:
+
+
+  errorBars: [x, [value1, std1], [value2, std2], ...]
+  fractions: [x, [num1, den1], [num2, den2], ...]
+  customBars: [x, [low1, val1, high1], [low2, val2, high2], ...]
+To specify missing data, set the value to null or NaN. You may not set a value inside an array to null or NaN. Use null or NaN instead of the entire array. The only difference between the two is when the option connectSeparatedPoints true. In that case, the gaps created by nulls are filled in, and gaps created by NaNs are preserved.
+
+-----------
+https://developers.google.com/chart/interactive/docs/quick_start
+
+convert SQL results into array
+
+https://codereview.stackexchange.com/questions/173838/get-rows-from-a-table-and-add-rows-to-google-charts
+
+Note my use of json_encode() to serialize the PHP data structure into javascript in the code above. This is the #1 most useful way to interchange data between PHP and javascript. Embrace the power of JSON serialization to simplify data transfer. Dynamically building javascript data structures via PHP string concatenation is a really bad approach.
+
+http://sophiedogg.com/creating-a-google-pie-chart-using-sql-data/
+
+Generate datasource using python:
+https://developers.google.com/chart/interactive/docs/dev/gviz_api_lib
