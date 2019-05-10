@@ -2,7 +2,7 @@
     require "db_historical_connect.php";
 
     // Get the latest sensor reading, round the result for each sensor and update webpage
-    $sql = "SELECT `timestampUTC`, `hx_hot_inlet_ave`, `hx_hot_outlet_ave`, `hx_cold_inlet_ave`,  `hx_cold_outlet_ave`,  `temp_ambient_ave`,  `cumulative_insolation` FROM `LoggedData` ORDER BY timestampUTC LIMIT 5;";
+    $sql = "SELECT `timestampUTC`, `hx_hot_inlet_ave`, `hx_hot_outlet_ave`, `hx_cold_inlet_ave`,  `hx_cold_outlet_ave`,  `temp_ambient_ave`,  `cumulative_insolation` FROM `LoggedData` ORDER BY timestampUTC LIMIT 2000;";
     $result = mysqli_query($conn_hist, $sql);
     $historydata = mysqli_fetch_all($result);
     mysqli_free_result($result);
@@ -19,15 +19,28 @@ if(empty($historydata)) {
     // use json_encode to pass data from PHP to javascript literal
     var historydata = <?php echo json_encode($historydata); ?>;
 
+    var SECONDS_FROM_1970_TO_2000 = 946684800;
+    var unixtime = 0;	
+   document.write("start<br>");
+    // convert timestamp unixtime to javascript dates
    hdlen = historydata.length;	
-   for (i = 0; i < 3; i++) {
-     document.writeln(historydata[i][0]);
+   for (i = 0; i < hdlen; i++) {
+//     document.write(historydata[i][0]);
+//     document.write(" = ");
+     unixtime = parseInt(historydata[i][0]) + SECONDS_FROM_1970_TO_2000;
+     historydata[i][0] = new Date(unixtime* 1000);
+//     document.writeln(historydata[i][0]);
+//     document.write("<br>");
    }
+   document.write("finish<br>");
 
-   document.writeln("----");
-   for (i = 0; i < 3; i++) {
-     document.writeln(historydata[0][i]);
-   }
+//   for (i = 0; i < hdlen; i++) {
+//     hdcol = historydata[i].length;
+//     for (j = 0; j < hdcol; ++j) {
+//       document.write(historydata[i][j]);
+//     }  
+//     document.write("<br>");
+//   }
 
     //Google Stuff
 //    google.charts.load('current', {packages: ['corechart']});
