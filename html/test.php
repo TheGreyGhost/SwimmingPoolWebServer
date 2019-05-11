@@ -4,7 +4,13 @@
 <link rel="stylesheet" href="./resources/extl/dygraph.css" />
 </head>
 <body>
-<div id="graphdiv"></div>
+<div id="graph_temp_pool"></div>
+<div id="graph_temp_hx"></div>
+<div id="graph_temp_ambient"></div>
+<div id="graph_cumulative_insolation"></div>
+<div id="graph_pump_runtime"></div>
+<div id="graph_status_info"></div>
+
 <?php 
 require __DIR__.'/../php/get_historical.php';
 ?>
@@ -40,14 +46,78 @@ require __DIR__.'/../php/get_historical.php';
              {id: 'hx_cold_outlet_ave', label: 'Temperature to pool', type: 'number'},
              {id: 'ambient_temperature', label: 'Ambient temperature', type: 'number'},
              {id: 'cumulative_insolation', label: 'Sunshine since midnight', type: 'number'},
+             {id: 'surgetank_level', label: 'Surge Tank Level', type: 'number'},
+             {id: 'pump_runtime', label: 'Pump runtime since midnight', type: 'number'},
+             {id: 'pump_state', label: 'Pump State Code', type: 'number'}
             ]
     	});
-    dt_history.addRows(historydata);	 
-    g = new Dygraph(
-        document.getElementById("graphdiv"),  // containing div
-        dt_history,
-        { }                                   // the options
+    dt_history.addRows(historydata);	
+    
+    dv_pool = new google.visualization.DataView(dt_history);
+    dv_pool.setColumns([0, 3]);
+    dv_hx = new google.visualization.DataView(dt_history);
+    dv_hx.setColumns([0, 1, 2, 3, 4]);
+    dv_temp_ambient = new google.visualization.DataView(dt_history);
+    dv_temp_ambient.setColumns([0, 5]);
+    dv_cumulative_insolation = new google.visualization.DataView(dt_history);
+    dv_cumulative_insolation.setColumns([0, 
+       {calc:cumul_insol_to_percent_hours, type:'number', label:'Sunshine since midnight (%.hours)'}]);
+    dv_pump_runtime = new google.visualization.DataView(dt_history);	
+    dv_pump_runtime.setColumns([0,8]);		
+    dv_status_info = new google.visualization.DataView(dt_history);
+    dv_status_info.setColumns([0,7,9]);	
+
+  function cumul_insol_to_percent_hours(dataTable, rowNum){
+    return dataTable.getValue(rowNum, 6) / 3600.0;
+  }
+  
+  function pump_status_to_text(num) {
+    return "status:" + num.toString();
+  }
+
+    g_pool = new Dygraph(
+        document.getElementById("graph_temp_pool"),  
+        dv_pool,
+        {ylabel: 'Pool Temperature (C)'
+         }                                   
+      );     
+    g_hx = new Dygraph(
+        document.getElementById("graph_temp_hx"),  
+        dv_hx,
+        {ylabel: 'Heat Exchanger Temperatures (C)'
+         }                                   
       );
+    g_temp_ambient = new Dygraph(
+        document.getElementById("graph_temp_ambient"),  
+        dv_temp_ambient,
+        {ylabel: 'Ambient Temperature (C)'
+         }                                   
+      );
+    g_cumulative_insolation = new Dygraph(
+        document.getElementById("graph_cumulative_insolation"),  
+        dv_cumulative_insolation,
+        {ylabel: 'Sunshine since midnight (%.hours)'
+         }                                  
+      );
+    g_pump_runtime = new Dygraph(
+        document.getElementById("graph_pump_runtime"),  
+        dv_pump_runtime,
+        {ylabel: 'Pump runtime since midnight (hours)'
+         }                                  
+      );
+    g_pump_runtime = new Dygraph(
+        document.getElementById("graph_status_info"),  
+        dv_status_info,
+        { ylabel: 'Status value',
+          stepPlot: true,
+          axes: {
+            y: {
+	      valueFormatter: pump_status_to_text
+            }
+          } 
+        }                                   
+      );      
+      
   }
 </script>
 </body>
