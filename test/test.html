@@ -1,10 +1,43 @@
 <html>
 <head>
-<script type="text/javascript" src="dygraph.js"></script>
-<link rel="stylesheet" href="dygraph.css" />
+<script type="text/javascript" src="./resources/ext/dygraph.js"></script>
+<link rel="stylesheet" href="./resources/ext/dygraph.css" />
 </head>
 <body>
 <div id="graphdiv"></div>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  // use json_encode to pass data from PHP to javascript literal
+  var historydata = <?php echo json_encode($historydata); ?>;
+
+  var SECONDS_FROM_1970_TO_2000 = 946684800;
+  var unixtime = 0;	
+  document.write("start<br>");
+  // convert timestamp unixtime to javascript dates
+  hdlen = historydata.length;	
+  for (i = 0; i < hdlen; i++) {
+    unixtime = parseInt(historydata[i][0]) + SECONDS_FROM_1970_TO_2000;
+    historydata[i][0] = new Date(unixtime* 1000);
+  }
+  document.write("finish<br>");
+
+  //Google Stuff
+  google.charts.load('current', {packages: ['corechart']});
+  google.charts.setOnLoadCallback(loadData);
+
+  function loadData() {
+    var dt_history = new google.visualization.DataTable({
+      cols: [{id: 'timestampUTC', label: 'Task', type: 'datetime'},
+             {id: 'hx_hot_inlet_ave', label: 'Temperature from panels', type: 'number'},
+             {id: 'hx_hot_outlet_ave', label: 'Temperature to panels', type: 'number'},
+             {id: 'hx_cold_inlet_ave', label: 'Temperature from pool', type: 'number'},
+             {id: 'hx_cold_outlet_ave', label: 'Sunshine since midnight', type: 'number'},
+             {id: 'cumulative_insolation', label: 'Temperature to pool', type: 'number'},
+             ]
+    	});
+    dt_history.addRows(historydata);	 
+  }
+</script>
 <script type="text/javascript">
   g = new Dygraph(
         document.getElementById("graphdiv"),  // containing div
