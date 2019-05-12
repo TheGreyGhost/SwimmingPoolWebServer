@@ -18,6 +18,7 @@ require __DIR__.'/../php/get_historical.php';
 <script type="text/javascript">
   // use json_encode to pass data from PHP to javascript literal
   var historydata = <?php echo json_encode($historydata); ?>;
+  var pumplabels = <?php echo json_encode($pumplabels); ?>;
 
   var SECONDS_FROM_1970_TO_2000 = 946684800;
   var unixtime = 0;	
@@ -54,7 +55,8 @@ require __DIR__.'/../php/get_historical.php';
     dt_history.addRows(historydata);	
     
     dv_pool = new google.visualization.DataView(dt_history);
-    dv_pool.setColumns([0, 3]);
+    dv_pool.setColumns([0, 
+       {calc:pool_temp_blanking, type:'number', label:'Pool temperature (C)'}]);
     dv_hx = new google.visualization.DataView(dt_history);
     dv_hx.setColumns([0, 1, 2, 3, 4]);
     dv_temp_ambient = new google.visualization.DataView(dt_history);
@@ -63,16 +65,34 @@ require __DIR__.'/../php/get_historical.php';
     dv_cumulative_insolation.setColumns([0, 
        {calc:cumul_insol_to_percent_hours, type:'number', label:'Sunshine since midnight (%.hours)'}]);
     dv_pump_runtime = new google.visualization.DataView(dt_history);	
-    dv_pump_runtime.setColumns([0,8]);		
+    dv_pump_runtime.setColumns([0,
+       {calc:pump_runtime_seconds_to_hours, type:'number', label:'Pump runtime since midnight (hours)'}]);		
     dv_status_info = new google.visualization.DataView(dt_history);
     dv_status_info.setColumns([0,7,9]);	
 
-  function cumul_insol_to_percent_hours(dataTable, rowNum){
+  function pool_temp_blanking(dataTable, rowNum) {	
+    if ((dataTable.getValue(rowNum, 9) & 16) == 16) { // pump is running is status bit 0x10 set
+      return dataTable.getValue(rowNum, 3);	  
+    } else { // pump not running so pool temp prob not valid
+      return NaN;
+    }  
+  }
+
+  function cumul_insol_to_percent_hours(dataTable, rowNum) {
     return dataTable.getValue(rowNum, 6) / 3600.0;
   }
-  
+  function pump_runtime_seconds_to_hours(dataTable, rowNum) {
+    return dataTable.getValue(rowNum, 8) / 3600.0;
+  }
   function pump_status_to_text(num) {
-    return "status:" + num.toString();
+    var retstr = "???";
+    for (i = 0; i < pumplabels.length; ++i) {
+      if (parseInt(pumplabels[i][0]) == num) {
+        retstr = pumplabels[i][1];
+      }
+    }	
+    retstr += "[" + num.toString() + "]"; 
+    return retstr;
   }
 
     g_pool = new Dygraph(
@@ -109,10 +129,19 @@ require __DIR__.'/../php/get_historical.php';
         document.getElementById("graph_status_info"),  
         dv_status_info,
         { ylabel: 'Status value',
+          y2label: 'Surge Tank level',	
           stepPlot: true,
+          series: {
+            'Surge Tank Level': {
+              axis: 'y2'
+            }
+          },    
           axes: {
             y: {
 	      valueFormatter: pump_status_to_text
+            },
+            y2: {
+              	
             }
           } 
         }                                   
