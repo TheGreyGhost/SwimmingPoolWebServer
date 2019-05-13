@@ -4,6 +4,25 @@
 <link rel="stylesheet" href="./resources/extl/dygraph.css" />
 </head>
 <body>
+
+<?php
+$startdate = filter_input(INPUT_GET, 'startdate', FILTER_SANITIZE_EMAIL);
+$finishdate = filter_input(INPUT_GET, 'finishdate', FILTER_SANITIZE_EMAIL);
+if ($finishdate === NULL || $finishdate === false) {
+  $finishdate = date("Y-m-d");
+}
+
+if ($startdate === NULL || $startdate === false) {
+  $startdate = date('Y-m-d', strtotime('-7 days', strtotime($finishdate)));
+}
+?>
+
+<form method="get">
+Start Date: <input type="date" name="startdate" value=<?php echo $startdate;?>><br>
+Finish Date: <input type="date" name="finishdate" value=<?php echo $finishdate;?>><br>
+<button type="submit" value="Submit">Submit</button>
+</form>
+
 <div id="graph_temp_pool"></div>
 <div id="graph_temp_hx"></div>
 <div id="graph_temp_ambient"></div>
@@ -22,7 +41,7 @@ require __DIR__.'/../php/get_historical.php';
 
   var SECONDS_FROM_1970_TO_2000 = 946684800;
   var unixtime = 0;	
-  document.write("start<br>");
+  document.write("loading data....<br>");
   // convert timestamp unixtime to javascript dates
   hdrows = historydata.length;
   hdcols = historydata[0].length	
@@ -32,7 +51,7 @@ require __DIR__.'/../php/get_historical.php';
     unixtime = historydata[i][0] + SECONDS_FROM_1970_TO_2000;
     historydata[i][0] = new Date(unixtime * 1000);
   }
-  document.write("finish<br>");
+//  document.write("finish<br>");
 
   //Google Stuff
   google.charts.load('current', {packages: ['corechart']});

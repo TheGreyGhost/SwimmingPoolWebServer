@@ -1,8 +1,14 @@
 <?php
     require "db_historical_connect.php";
 
+   $SECONDS_FROM_1970_TO_2000 = 946684800;
+
+  $startdateUTC = strtotime($startdate) - $SECONDS_FROM_1970_TO_2000; 	
+  $finishdateUTC = strtotime($finishdate) - $SECONDS_FROM_1970_TO_2000;
+
     // get the requested historical data range 
-    $sql = "SELECT `timestampUTC`,`hx_hot_inlet_ave`,`hx_hot_outlet_ave`, `hx_cold_inlet_ave`,`hx_cold_outlet_ave`,`temp_ambient_ave`,`cumulative_insolation`,`surgetank_level`,`pump_runtime`,`pump_state` FROM `LoggedData` ORDER BY timestampUTC LIMIT 20000;";
+    $sql = "SELECT `timestampUTC`,`hx_hot_inlet_ave`,`hx_hot_outlet_ave`, `hx_cold_inlet_ave`,`hx_cold_outlet_ave`,`temp_ambient_ave`,`cumulative_insolation`,`surgetank_level`,`pump_runtime`,`pump_state` FROM `LoggedData` WHERE timestampUTC BETWEEN $startdateUTC AND $finishdateUTC ORDER BY timestampUTC;";
+
     $result = mysqli_query($conn_hist, $sql);
     $historydata = mysqli_fetch_all($result);
     mysqli_free_result($result);
