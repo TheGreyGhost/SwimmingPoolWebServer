@@ -2,6 +2,32 @@
 <head>
 <script type="text/javascript" src="./resources/extl/dygraph.js"></script>
 <link rel="stylesheet" href="./resources/extl/dygraph.css" />
+    <style type="text/css">
+    #graph_temp_pool {
+      width: 80%;
+      height: 80%;
+     }
+    #graph_temp_hx {
+      width: 80%;
+      height: 80%;
+     }
+    #graph_temp_ambient {
+      width: 80%;
+      height: 80%;
+     }
+    #graph_cumulative_insolation {
+      width: 80%;
+      height: 80%;
+     }
+    #graph_pump_runtime {
+      width: 80%;
+      height: 80%;
+     }
+    #graph_status_info {
+      width: 80%;
+      height: 80%;
+     }
+    </style>
 </head>
 <body>
 
@@ -23,6 +49,7 @@ Finish Date: <input type="date" name="finishdate" value=<?php echo $finishdate;?
 <button type="submit" value="Submit">Submit</button>
 </form>
 
+Please wait for data to load...<br>
 <div id="graph_temp_pool"></div>
 <div id="graph_temp_hx"></div>
 <div id="graph_temp_ambient"></div>
@@ -41,7 +68,6 @@ require __DIR__.'/../php/get_historical.php';
 
   var SECONDS_FROM_1970_TO_2000 = 946684800;
   var unixtime = 0;	
-  document.write("loading data....<br>");
   // convert timestamp unixtime to javascript dates
   hdrows = historydata.length;
   hdcols = historydata[0].length	
