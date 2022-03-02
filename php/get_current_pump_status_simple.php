@@ -9,5 +9,5 @@
     mysqli_free_result($result);
     mysqli_close($conn_rt);
 
-    echo "Current pump status:".(($srow["pump_state"] & 32) != 0 ? "Error" : "OK")."[".$srow["pump_state"]."][".$srow["pump_state_label"]."]<br>";
+    echo (($srow["pump_state"] & 32) != 0 ? "Error" : "OK");
 ?>
