@@ -30,7 +30,7 @@
     </style>
 </head>
 <body>
-<a href="index.php">Current&nbspreadings</a>&nbsp&nbspHistorical&nbspGraphs<br>
+<a href="index.php">Current&nbsp&nbspreadings</a>&nbsp&nbspHistorical&nbspGraphs&nbsp&nbsp<a href="pumpstatus.php">Pump&nbspStatus</a><br>
 -------------------------<br>
 <?php
 $startdate = filter_input(INPUT_GET, 'startdate', FILTER_SANITIZE_EMAIL);
